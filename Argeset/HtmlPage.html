@@ -4,7 +4,7 @@
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 <title>UK Festivals</title>
 
-<!--Set up the CSS styles-->
+
 <style type="text/css">
       html { 
 	      height: 100%;
@@ -22,7 +22,7 @@
 	      background-size: cover;
 	  }
       
-	  /*Adapt the following styling depending on where you want to put your map. If you want a 'full screen' map, then set the width and height to 100 percent and remove the margins.*/
+	  
 	  #festival-map { 
 	  	  height: 100%;
 		  width: 65%; 
@@ -48,17 +48,16 @@
 
     
 
-<!--Connect to the google maps api using your api key-->
+
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCvpJ5B-qZ8cE8x9bRA1cSRzeTx0RHOJtQ&sensor=true"></script>
 
-<!--Connect to the infobox javascript library. This is used later to create the pop-up windows -->
+
 <script src="infobox/infobox.js" type="text/javascript"></script>
 
-<!--Main chunk of javascript that creates and controls the map.-->
+
 <script type="text/javascript">
 
-    //Set up the custom styles for the map. I've created two styles so the map can switch between them depending on the zoom level. i.e. there is far less detail when the map is zoomed out.
-    //First, we read in the data describing style.
+    
     var style_festival = [
       {
           "featureType": "administrative",
@@ -135,19 +134,18 @@
       }
     ];
 
-    //Then we use this data to create the styles. 
+    
     var styled_festival = new google.maps.StyledMapType(style_festival, { name: "Festival style" });
     var styled_festival_zoomed = new google.maps.StyledMapType(style_festival_zoomed, { name: "Festival style zoomed" });
 
-    //Create the variables that will be used within the map configuration options.
-    //The latitude and longitude of the center of the map.
+    
     var festivalMapCenter = new google.maps.LatLng(54.722439, -0.252686);
-    //The degree to which the map is zoomed in. This can range from 0 (least zoomed) to 21 and above (most zoomed).
+    
     var festivalMapZoom = 6;
     var festivalMapZoomMax = 12;
     var festivalMapZoomMin = 6;
 
-    //These options configure the setup of the map. 
+    
     var festivalMapOptions = {
         center: festivalMapCenter,
         zoom: festivalMapZoom,
@@ -160,46 +158,46 @@
         }
     };
 
-    //Create the variable for the main map itself.
+ 
     var festivalMap;
 
-    //Create control panel (ie. site title and 2 buttons) which appears on the right-hand side.
+    
     var controlPanelDiv = document.createElement('div');
     var festivalMapControlPanel = new createControlPanel(controlPanelDiv, festivalMap);
 
-    //Create the reset map button.
+    
     var resetButtonDiv = document.createElement('div');
     var festivalMapResetButton = new createResetButton(resetButtonDiv, festivalMap);
 
-    //Variable containing the style for the pop-up infobox.
+    
     var pop_up_info = "border: 0px solid black; background-color: #ffffff; padding:15px; margin-top: 8px; border-radius:10px; -moz-border-radius: 10px; -webkit-border-radius: 10px; box-shadow: 1px 1px #888;";
 
 
-    //When the page loads, the line below calls the function below called 'loadFestivalMap' to load up the map.
+    
     google.maps.event.addDomListener(window, 'load', loadFestivalMap);
 
 
-    //THE MAIN FUNCTION THAT IS CALLED WHEN THE WEB PAGE LOADS--------------------------------------------------------------------------------
+    
     function loadFestivalMap() {
 
-        //The variable to hold the map was created above.The line below creates the map, assigning it to this variable. The line below also loads the map into the div with the id 'festival-map' (see code within the 'body' tags below), and applies the 'festivalMapOptions' (above) to configure this map. 
+        
         festivalMap = new google.maps.Map(document.getElementById("festival-map"), festivalMapOptions);
 
-        //Assigning the two map styles defined above to the map.
+        
         festivalMap.mapTypes.set('map_styles_festival', styled_festival);
         festivalMap.mapTypes.set('map_styles_festival_zoomed', styled_festival_zoomed);
-        //Setting the one of the styles to display as default as the map loads.
+        
         festivalMap.setMapTypeId('map_styles_festival');
 
 
-        //Continuously listens out for when the zoom level changes. This includs when the map zooms when a marker is clicked.
+        
         google.maps.event.addListener(festivalMap, "zoom_changed", function () {
             var newZoom = festivalMap.getZoom();
-            //If the map is zoomed in, the switch to the style that shows the higher level of detail.
+            
             if (newZoom > 6) {
                 festivalMap.setMapTypeId('map_styles_festival_zoomed');
             }
-                //Otherwise the map must be zoomed out, so use the style with the lower level of detail.
+                
             else {
                 festivalMap.setMapTypeId('map_styles_festival');
             }
@@ -207,63 +205,61 @@
         });
 
 
-        //Add the control panel and reset button (created previously) to the map.
+        
         festivalMap.controls[google.maps.ControlPosition.RIGHT_TOP].push(controlPanelDiv);
         festivalMap.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(resetButtonDiv);
 
-        //Calls the function below to load up all the map markers.
+        
         loadMapMarkers();
 
     }
 
 
 
-    //Function that loads the map markers and the pop-up info boxes.
+    
     function loadMapMarkers() {
 
-        //GLASTONBURY -----------------
-
-        //Setting the position of the Glastonbury map marker.
+        
         var markerPositionGlastonbury = new google.maps.LatLng(51.159803, -2.585585);
 
-        //Setting the icon to be used with the Glastonbury map marker.
+        
         var markerIconGlastonbury = {
             url: 'icons/icon_glas_uk.png',
-            //The size image file.
+          
             size: new google.maps.Size(225, 120),
-            //The point on the image to measure the anchor from. 0, 0 is the top left.
+            
             origin: new google.maps.Point(0, 0),
-            //The x y coordinates of the anchor point on the marker. e.g. If your map marker was a drawing pin then the anchor would be the tip of the pin.
+            
             anchor: new google.maps.Point(189, 116)
         };
 
-        //Setting the shape to be used with the Glastonbury map marker.
+        
         var markerShapeGlastonbury = {
             coord: [12, 4, 216, 22, 212, 74, 157, 70, 184, 111, 125, 67, 6, 56],
             type: 'poly'
         };
 
-        //Creating the Glastonbury map marker.
+        
         markerGlastonbury = new google.maps.Marker({
-            //uses the position set above.
+            
             position: markerPositionGlastonbury,
-            //adds the marker to the map.
+            
             map: festivalMap,
             title: 'Glastonbury Festival',
-            //assigns the icon image set above to the marker.
+            
             icon: markerIconGlastonbury,
-            //assigns the icon shape set above to the marker.
+            
             shape: markerShapeGlastonbury,
-            //sets the z-index of the map marker.
+            
             zIndex: 107
         });
 
-        //Creates the information to go in the pop-up info box.
+        
         var boxTextGlastonbury = document.createElement("div");
         boxTextGlastonbury.style.cssText = pop_up_info;
         boxTextGlastonbury.innerHTML = '<span class="pop_up_box_text"><img src="content/glastonbury.jpg" width="400" height="285" border="0" /></span>';
 
-        //Sets up the configuration options of the pop-up info box.                
+                        
         var infoboxOptionsGlastonbury = {
             content: boxTextGlastonbury
                         , disableAutoPan: false
@@ -283,23 +279,23 @@
                         , enableEventPropagation: false
         };
 
-        //Creates the pop-up infobox for Glastonbury, adding the configuration options set above.
+        
         infoboxGlastonbury = new InfoBox(infoboxOptionsGlastonbury);
 
-        //Add an 'event listener' to the Glastonbury map marker to listen out for when it is clicked.
+        
         google.maps.event.addListener(markerGlastonbury, "click", function (e) {
-            //Open the Glastonbury info box.
+            
             infoboxGlastonbury.open(festivalMap, this);
-            //Changes the z-index property of the marker to make the marker appear on top of other markers.
+            
             this.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
-            //Zooms the map.
+            
             setZoomWhenMarkerClicked();
-            //Sets the Glastonbury marker to be the center of the map. 
+             
             festivalMap.setCenter(markerGlastonbury.getPosition());
         });
 
 
-        //ISLE OF WIGHT-----------
+        
 
         var markerPositionIsleOfWight = new google.maps.LatLng(50.708571, -1.285615);
 
@@ -325,7 +321,7 @@
         });
 
 
-        //LEEDS ------------
+       
 
         var markerPositionLeeds = new google.maps.LatLng(53.868083, -1.381359);
 
@@ -351,7 +347,7 @@
         });
 
 
-        //READING -------------
+        
         var markerPositionReading = new google.maps.LatLng(51.465602, -0.987096);
 
         var markerIconReading = {
@@ -376,7 +372,7 @@
         });
 
 
-        //LATITUDE -------------
+        
         var markerPositionLatitude = new google.maps.LatLng(52.337013, 1.595228);
 
         var markerIconLatitude = {
@@ -401,7 +397,7 @@
         });
 
 
-        //SECRET GARDEN ------------
+        
         var markerPositionGarden = new google.maps.LatLng(52.383126, -0.181189);
 
         var markerIconGarden = {
@@ -426,7 +422,7 @@
         });
 
 
-        //T IN THE PARK ------------
+       
         var markerPositionTPark = new google.maps.LatLng(56.208772, -3.474255);
 
         var markerIconTPark = {
@@ -451,7 +447,7 @@
         });
 
 
-        //ROCKNESS -------------
+       
         var markerPositionRockness = new google.maps.LatLng(57.383732, -4.331617);
 
         var markerIconRockness = {
@@ -476,7 +472,7 @@
         });
 
 
-        //GLASGOBURY -----------
+        
         var markerPositionGlasgowbury = new google.maps.LatLng(54.822809, -6.842251);
 
         var markerIconGlasgowbury = {
@@ -503,7 +499,7 @@
     }
 
 
-    //Function that zooms the map in (if has not been zoomed already) when a map marker is clicked.
+    
     function setZoomWhenMarkerClicked() {
         var currentZoom = festivalMap.getZoom();
         if (currentZoom < 7) {
@@ -511,7 +507,7 @@
         }
     }
 
-    //Function that resets the z-indexes back to their orignal values.
+    
     function resetZindexes() {
         markerRockness.setZIndex(100);
         markerTPark.setZIndex(101);
@@ -524,7 +520,7 @@
         markerIsleOfWight.setZIndex(108);
     }
 
-    //Function that creates the control panel area, ie. the map title and the 2 buttons just beneath it.
+    
     function createControlPanel(controlPanelDiv) {
         controlPanelDiv.style.padding = '0px';
         controlUI = document.createElement('div');
@@ -538,7 +534,7 @@
         controlUI.style.height = '419px';
         controlPanelDiv.appendChild(controlUI);
 
-        //Map title
+        
         titleBar = document.createElement('div');
         titleBar.style.backgroundColor = '#89CBED';
         titleBar.style.height = '255px';
@@ -576,7 +572,7 @@
         yellowStripe.style.fontSize = '14px';
         controlUI.appendChild(yellowStripe);
 
-        //'Smaller' events button.
+        
         smallEvents = document.createElement('div');
         smallEvents.style.height = '108px';
         smallEvents.style.width = '129px';
@@ -592,7 +588,7 @@
         smallEvents.innerHTML = '<div align="center" onClick="handelRequests(\'small_events\')" OnMouseOver="this.style.cursor=\'pointer\';" OnMouseOut="this.style.cursor=\'default\';"><img src="icons/button_small_event.png" width="128" height="107" border="0"/></div>';
         controlUI.appendChild(smallEvents);
 
-        //Umbrella button
+        
         brolly = document.createElement('div');
         brolly.style.height = '149px';
         brolly.style.width = '94px';
@@ -611,7 +607,7 @@
     }
 
 
-    //Function that creates the 'Reser map' button.
+    
     function createResetButton(resetButtonDiv) {
         resetButtonDiv.style.padding = '0px';
         controlUI2 = document.createElement('div');
@@ -629,14 +625,14 @@
         resetButtonDiv.appendChild(controlUI2);
     }
 
-    //Function that is called when either the 'smaller events', unbrella or the 'reset map' buttons are clicked.
+    
     function handelRequests(buttonPressed) {
         if (buttonPressed === "reset") {
-            //Resets the zoom, map position and marker z-indexes back to their orignal position. Also closes all infoboxes currently open.
+            
             festivalMap.setZoom(festivalMapZoom);
             festivalMap.setCenter(festivalMapCenter);
             resetZindexes();
-            //This is a function I've created (below) that closes any info boxes that are open.
+            
             closeAllInfoboxes();
         }
         else if (buttonPressed === "small_events") {
@@ -647,17 +643,17 @@
         }
     }
 
-    //Function that closes all info boxes.
+    
     function closeAllInfoboxes() {
         infoboxGlastonbury.close();
-        //We've only created one pop up info box so far. But if we'd created more, they'd also need to be closed here.
+        
     }
 
 </script>
 
 </head>
 <body>  
-     <!--Create the div to hold the map.-->
+     
     <div id="festival-map"></div>   
 </body>
 </html>
